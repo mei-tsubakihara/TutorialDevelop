@@ -7,14 +7,17 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne; //追加
+import javax.persistence.PreRemove; //追加
 import javax.persistence.Table;
-import javax.validation.constraints.Email; //追加
-import javax.validation.constraints.Max; //追加
-import javax.validation.constraints.Min; //追加
-import javax.validation.constraints.NotEmpty; //追加
-import javax.validation.constraints.NotNull; //追加
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.Length; //追加
+import org.hibernate.validator.constraints.Length;
+import org.springframework.transaction.annotation.Transactional; //追加
 
 import lombok.Data;
 
@@ -56,4 +59,19 @@ public class User {
     @Email //追加
     @Length(max=50) //追加
     private String email;
+
+    // ----- 追加ここから -----
+    @OneToOne(mappedBy="user")
+    private Authentication authentication;
+
+    /** レコードが削除される前に行う処理 */
+    @PreRemove
+    @Transactional
+    private void preRemove() {
+        //認証エンティティからuserを切り離す
+        if (authentication!=null) {
+            authentication.setUser(null);
+        }
+    }
+     // ----- 追加ここまで -----
 }
