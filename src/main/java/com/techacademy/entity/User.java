@@ -38,8 +38,8 @@ public class User {
     private Integer id;
 
     /**　名前。20桁。null不許可　*/
-    @NotEmpty //追加
     @Column(length = 20, nullable = false)
+    @NotEmpty //追加
     @Length(max=20) //追加
     private String name;
 
